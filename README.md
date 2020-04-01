@@ -1,2 +1,2 @@
-# handwriting
+# Handwriting
  Plugins for reveal.js
