@@ -24,6 +24,20 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		window.addEventListener( "test", null, Object.defineProperty({}, "passive", { get: function () { passiveSupported = true; } }));
 	} catch (err) { }
 
+
+	function loadfont(fontpath) {
+		var head = document.querySelector( 'head' );
+		resource = document.createElement( 'link' );
+		resource.rel = 'stylesheet';
+		resource.href = fontpath;
+
+		// resource.onload = finish;
+		head.appendChild( resource );
+	}
+
+	let fontpath = 'plugin/handwriting/font-awesome/css/all.css';
+	loadfont(fontpath);	
+	
 	let gHSLA = { hue: 60, saturation: 0, lightness: 50 };
 
 	const iconEditing = 'fa-user-edit';
