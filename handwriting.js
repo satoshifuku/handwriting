@@ -51,7 +51,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			cursor: 'url( ' + path + 'img/marker.png) 16 16, auto',
 			rememberColor: true,
 			button: {
-				left: "110px", bottom: "30px", top: "auto", right: "auto",
+				left: "30px", bottom: "70px", top: "auto", right: "auto",
 				innerHTML: '<a onclick="RevealHandWriting.toggleNotesCanvas(this);"><i class="' +  'fas '+ icons.marker +'"></i></a>'
 			},
 			lineWidth: 7,
@@ -69,7 +69,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			cursor: 'url( ' + path + 'img/chalk.png) 16 16, auto',
 			rememberColor: false,
 			button: {
-				left: "70px", bottom: "30px", top: "auto", right: "auto",
+				left: "30px", bottom: "30px", top: "auto", right: "auto",
 				innerHTML: '<a onclick="RevealHandWriting.toggleChalkboard(this);"><i class="' +  'fas ' + icons.chalk +'"></i></a>'
 			},
 			lineWidth: 15,
