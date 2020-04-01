@@ -1,7 +1,7 @@
 # Handwriting
 
 Handwriting is a plugin for [Reveal.js](https://github.com/hakimel/reveal.js).
-This plugin provides a option you annotate to your presentation with handwriting.
+This plugin provides a option you annotate to your presentation with a mouse, touch and pen.
 Some functions of this plugin are based on [Chalkboard of reveal.js-plugins](https://github.com/rajgoel/reveal.js-plugins/tree/master/chalkboard).
 
 [Check out the live demo](https://satoshifuku.github.io/handwriting/demo/demo.html)
@@ -52,11 +52,31 @@ Reveal.initialize({
 
 |Name|Detail|
 |:---|:---|
-|toggleNotesCanvas()|Toggle open and close notes canvas|
-|toggleChalkboard()|Toggle  open and close chalkboard|
+|toggleNotesCanvas()|Toggle enable and disable marker mode|
+|toggleChalkboard()|Toggle enable and disable chalk mode|
 |clear()|Clear chalkboard|
 |reset()|Reset chalkboard data on current slide|
 |download()|Downlad recorded drawing|
 |colorCycle()|Change colors|
 
 
+
+## Usage
+
+You can use two drawing modes:
+
+- Maker pen
+- chalk
+
+
+### Mouse
+
+Drawing: Click a left button and drag
+
+Eraser: Click a right button and drag
+
+### Touch and pen
+
+Drawing: Touch and move
+
+Eraser: Touch and hold for half a second, then move
