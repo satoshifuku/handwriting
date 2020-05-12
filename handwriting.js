@@ -565,16 +565,21 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	
 	function toggleNotesCanvas() {
 		toggleCanvas("marker");
-		if(pointers.chalk.canvas.container.classList.contains( 'visible' )){
-			toggleCanvas("chalk");
+		if("chalk" in pointers){
+			if(pointers["chalk"].canvas.container.classList.contains( 'visible' )){
+				toggleCanvas("chalk");
+			}
 		}
 	}
 
 	function toggleChalkboard() {
 		toggleCanvas("chalk");
-		if(pointers.marker.canvas.container.classList.contains( 'visible' )){
-			toggleCanvas("marker");
+		if("marker" in pointers){
+			if(pointers["marker"].canvas.container.classList.contains( 'visible' )){
+				toggleCanvas("marker");
+			}
 		}
+
 	}
 
 	function closeCanvas() {
