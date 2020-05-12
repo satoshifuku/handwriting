@@ -532,18 +532,15 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 		replaceIconOnEditing(icons[key], iconEditing);
 		
-		let notescanvas = document.getElementById(pointers.marker.canvas.name);
-		let chalkboard = document.getElementById(pointers.chalk.canvas.name);
+		let canvas = document.getElementById(pointers[key].canvas.name);
 
 		if (!pointers[key].canvas.container.classList.contains( 'visible' )) {
 			action = null;
-			if(key == "marker")	notescanvas.style.pointerEvents = "none";
-			else if(key == "chalk")	chalkboard.style.pointerEvents = "none";
+			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "none";
 		}
 		else {
 			setColor2Pens();
-			if(key == "marker")	notescanvas.style.pointerEvents = "auto";
-			else if(key == "chalk")	chalkboard.style.pointerEvents = "auto";
+			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "auto";			
 			currentKey = key;
 		}		
 	}
