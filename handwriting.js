@@ -456,7 +456,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		assignVector(e,mouse);
 		let adjusted = calculateVectorNonScaled(offset, mouse, scale);
 
-		if (e.button == 2 || e.button == 1) {	//1 = middle, 2 = right buton.
+		if ((e.button == 2 || e.button == 1) || eraser.visibility == "visible") {	//1 = middle, 2 = right buton.
 			action = { type: actionType.erase, curve: [{ x: adjusted.x, y: adjusted.y }] };
 		}
 		else if (e.button == 0) {
@@ -594,6 +594,8 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	}
 
 	function toggleraser() {
+		if (eraser.visibility == "hidden") eraser.visibility = "visible"; // make sure that the eraser from touch events is hidden
+		else eraser.visibility = "hidden"; // make sure that the eraser from touch events is hidden
 		// toggleCanvas("erase");
 		// if("marker" in pointers){
 		// 	if(pointers["marker"].canvas.container.classList.contains( 'visible' )){
