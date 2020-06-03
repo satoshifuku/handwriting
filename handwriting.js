@@ -41,7 +41,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	let gHSLA = { hue: 60, saturation: 0, lightness: 50 };
 
 	const iconEditing = 'fa-user-edit';
-	const icons = {marker: 'fa-pen-alt', chalk: 'fa-pen'};
+	const icons = {marker: 'fa-pen-alt', chalk: 'fa-pen', eraser: 'fa-eraser'};
 	const actionType = {draw: "draw", erase: "erase", setColor: "setcolor"};
 
 	
@@ -93,6 +93,17 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 				}
 			}
 		},
+		eraser: {
+			color: setHSLa(1),
+			cursor: 'url( ' + path + 'img/chalk.png) 16 16, auto',
+			rememberColor: false,
+			button: {
+				left: "30px", bottom: "110px", top: "auto", right: "auto",
+				innerHTML: '<a onclick="RevealHandWriting.toggleraser(this);"><i class="' +  'fas ' + icons.eraser +'"></i></a>'
+			},
+			radius: 20, 
+			visibility: "hidden",	
+		}
 	};
 
 	let eraser = { radius: 20, visibility: "hidden"	}
@@ -198,8 +209,8 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 		for ( key in pointers) {
 
-				let container = document.createElement( "div" );
-			container.id = pointers[key].canvas.name;
+			let container = document.createElement( "div" );
+			if ( key != "eraser" ) container.id = pointers[key].canvas.name;
 			container.style.cursor = pointers[key].cursor;
 
 			container.classList.add( 'overlay' );
@@ -207,7 +218,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			container.oncontextmenu = function () { return false; }
 			container.style.pointerEvents = "none";
 
-			setWindowParameter(pointers[key], storages[key]);
+			if ( key != "eraser" ) setWindowParameter(pointers[key], storages[key]);
 
 			if ( key == "marker" ) container.style.background = pointers.marker.canvas.backgroundColor;
 			else if ( key == "chalk" ) container.style.background = pointers.chalk.canvas.type.blackBoard.src + '" ) repeat';
@@ -582,6 +593,15 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	}
 
+	function toggleraser() {
+		// toggleCanvas("erase");
+		// if("marker" in pointers){
+		// 	if(pointers["marker"].canvas.container.classList.contains( 'visible' )){
+		// 		toggleCanvas("marker");
+		// 	}
+		// }
+	}
+
 	function closeCanvas() {
 		for ( key in pointers ) {
 			pointers[key].canvas.container.classList.remove( 'visible' );
@@ -639,6 +659,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;
+	this.toggleraser = toggleraser;
 	this.clear = clear;
 	this.colorCycle = colorCycle;
 	this.reset = resetSlide;
