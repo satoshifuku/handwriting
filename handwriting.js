@@ -188,7 +188,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		let button = document.createElement( "div" );
 		button.className = "chalkboard-button";
 		button.id = "toggle-" + key;
-		button.style.visibility = "visible";
+		button.style.visibility = key != "eraser" ? "visible" : "hidden";
 		button.style.position = "absolute";
 		button.style.zIndex = 30;
 		button.style.fontSize = "24px";
@@ -544,14 +544,26 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		
 		let canvas = document.getElementById(pointers[key].canvas.name);
 
+		let syle_eraser = document.getElementById("toggle-eraser").style;
+		
 		if (!pointers[key].canvas.container.classList.contains( 'visible' )) {
 			action = null;
 			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "none";
+			for (k in pointers)
+				document.getElementById("toggle-" + k).style.visibility = "visible";
+			syle_eraser.visibility = "hidden";
 		}
 		else {
 			setColor2Pens();
-			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "auto";			
+			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "auto";
+			for (k in pointers)
+				document.getElementById("toggle-" + k).style.visibility = "hidden";					
+
+			document.getElementById("toggle-" + key).style.visibility = "visible";					
+
 			currentKey = key;
+			syle_eraser.visibility = "visible";
+			syle_eraser.left = pointers["eraser"].button.left;
 		}		
 	}
 
@@ -601,7 +613,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	function toggleraser() {
 		pointers["eraser"].visibility = pointers["eraser"].visibility == "hidden" ? "visible" : "hidden";
-
+		slideIcon("eraser");
 	}
 
 	function closeCanvas() {
