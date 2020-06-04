@@ -540,7 +540,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		pointers[key].canvas.container.classList.toggle( 'visible' );
 
 		replaceIconOnEditing(icons[key], iconEditing);
-		popIcon(key);
+		slideIcon(key);
 		
 		let canvas = document.getElementById(pointers[key].canvas.name);
 
@@ -572,7 +572,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		}
 	}
 
-	function popIcon(key){
+	function slideIcon(key){
 		let target = document.getElementById("toggle-" + key);
 		let left = parseInt(target.style.left, 10);
 		let offset = left == parseInt(pointers[key].button.left, 10) ? 10 : -10;
