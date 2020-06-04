@@ -41,13 +41,14 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	let gHSLA = { hue: 60, saturation: 0, lightness: 50 };
 
 	const iconEditing = 'fa-user-edit';
-	const icons = {marker: 'fa-pen-alt', chalk: 'fa-pen'};
+	const icons = {marker: 'fa-pen-alt', chalk: 'fa-pen', eraser: 'fa-eraser'};
 	const actionType = {draw: "draw", erase: "erase", setColor: "setcolor"};
 
 	
 	let pointers = {
 		marker: {
 			color: setHSLa(1),
+			color_alpha: 1,
 			cursor: 'url( ' + path + 'img/marker.png) 16 16, auto',
 			rememberColor: true,
 			button: {
@@ -66,6 +67,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		},
 		chalk: {
 			color: setHSLa(1),
+			color_alpha: 1,			
 			cursor: 'url( ' + path + 'img/chalk.png) 16 16, auto',
 			rememberColor: false,
 			button: {
@@ -93,9 +95,19 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 				}
 			}
 		},
+		eraser: {
+			color: setHSLa(1),
+			color_alpha: 1,			
+			cursor: 'url( ' + path + 'img/chalk.png) 16 16, auto',
+			rememberColor: false,
+			button: {
+				left: "30px", bottom: "110px", top: "auto", right: "auto",
+				innerHTML: '<a onclick="RevealHandWriting.toggleraser(this);"><i class="' +  'fas ' + icons.eraser +'"></i></a>'
+			},
+			radius: 20, 
+			visibility: "hidden",	
+		}
 	};
-
-	let eraser = { radius: 20, visibility: "hidden"	}
 
 
 	let storages = resetStorages();
@@ -136,18 +148,20 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		return 'hsla( ' + String(gHSLA.hue) + ',' + String(gHSLA.saturation) + '%,' + String(gHSLA.lightness) + '%,' + String(a) + ' )';
 	}
 
+	function setColor2Pen(key, color) {
+
+		document.getElementsByClassName( icons[key] )[0].style.color = color;
+		pointers[key].color = color;
+	}
+
 	function setColor2Pens(color=null) {
-
-		let color_hsl = color == null ? setHSLa(1) : color;
-
+		
 		for (key in pointers){
-			let target = document.getElementsByClassName( icons[key] );
-			for (let i = 0; i < target.length; i++)	
-				target[i].style.color = color_hsl;
-			pointers[key].color = color_hsl;
+			let color_hsl = color == null ? setHSLa(pointers[key].color_alpha) : color;
+			setColor2Pen(key,color_hsl);
 		}
 
-		return color_hsl;
+		return color == null ? setHSLa(1) : color;
 	}
 
 	function setScaleOffset(pointer){
@@ -179,7 +193,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		let button = document.createElement( "div" );
 		button.className = "chalkboard-button";
 		button.id = "toggle-" + key;
-		button.style.visibility = "visible";
+		button.style.visibility = key != "eraser" ? "visible" : "hidden";
 		button.style.position = "absolute";
 		button.style.zIndex = 30;
 		button.style.fontSize = "24px";
@@ -198,8 +212,8 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 		for ( key in pointers) {
 
-				let container = document.createElement( "div" );
-			container.id = pointers[key].canvas.name;
+			let container = document.createElement( "div" );
+			if ( key != "eraser" ) container.id = pointers[key].canvas.name;
 			container.style.cursor = pointers[key].cursor;
 
 			container.classList.add( 'overlay' );
@@ -207,7 +221,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			container.oncontextmenu = function () { return false; }
 			container.style.pointerEvents = "none";
 
-			setWindowParameter(pointers[key], storages[key]);
+			if ( key != "eraser" ) setWindowParameter(pointers[key], storages[key]);
 
 			if ( key == "marker" ) container.style.background = pointers.marker.canvas.backgroundColor;
 			else if ( key == "chalk" ) container.style.background = pointers.chalk.canvas.type.blackBoard.src + '" ) repeat';
@@ -357,7 +371,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	function eraseWithEraser(context, x, y) {
 
-		let radius = eraser.radius;
+		let radius = pointers["eraser"].radius;
 
 		context.save();
 		context.beginPath();
@@ -445,7 +459,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		assignVector(e,mouse);
 		let adjusted = calculateVectorNonScaled(offset, mouse, scale);
 
-		if (e.button == 2 || e.button == 1) {	//1 = middle, 2 = right buton.
+		if ((e.button == 2 || e.button == 1) || pointers["eraser"].visibility == "visible") {	//1 = middle, 2 = right buton.
 			action = { type: actionType.erase, curve: [{ x: adjusted.x, y: adjusted.y }] };
 		}
 		else if (e.button == 0) {
@@ -527,24 +541,46 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	});
 
 	function toggleCanvas(key){
-		eraser.visibility = "hidden"; // make sure that the eraser from touch events is hidden
+		pointers["eraser"].visibility = "hidden"; // make sure that the eraser from touch events is hidden
 		pointers[key].canvas.container.classList.toggle( 'visible' );
 
 		replaceIconOnEditing(icons[key], iconEditing);
+		slideIcon(key);
 		
-		let notescanvas = document.getElementById(pointers.marker.canvas.name);
-		let chalkboard = document.getElementById(pointers.chalk.canvas.name);
+		let canvas = document.getElementById(pointers[key].canvas.name);
 
+		let syle_eraser = document.getElementById("toggle-eraser").style;
+		
 		if (!pointers[key].canvas.container.classList.contains( 'visible' )) {
+			for (k in pointers) {
+				pointers[k].color_alpha = 1.0;
+				document.getElementById("toggle-" + k).style.pointerEvents = 'auto';
+			}
+			setColor2Pens();
 			action = null;
-			if(key == "marker")	notescanvas.style.pointerEvents = "none";
-			else if(key == "chalk")	chalkboard.style.pointerEvents = "none";
+			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "none";
+			syle_eraser.visibility = "hidden";
 		}
 		else {
+			for (k in pointers) {
+				if (k == key || k == "eraser") { 
+					pointers[k].color_alpha = 1.0;
+				}
+				else {
+					pointers[k].color_alpha = 0.3;
+					document.getElementById("toggle-" + k).style.pointerEvents = 'none';
+				}
+			}
 			setColor2Pens();
-			if(key == "marker")	notescanvas.style.pointerEvents = "auto";
-			else if(key == "chalk")	chalkboard.style.pointerEvents = "auto";
+			// document.getElementsByClassName(icons['chalk'])[0].style.color = setHSLa(0.1);
+
+			if (key == "marker" || key == "chalk") canvas.style.pointerEvents = "auto";
+
+			document.getElementById("toggle-" + key).style.visibility = "visible";
+
 			currentKey = key;
+			syle_eraser.visibility = "visible";
+			syle_eraser.left = pointers["eraser"].button.left;
 		}		
 	}
 
@@ -565,19 +601,36 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		}
 	}
 
+	function slideIcon(key){
+		let target = document.getElementById("toggle-" + key);
+		let left = parseInt(target.style.left, 10);
+		let offset = left == parseInt(pointers[key].button.left, 10) ? 10 : -10;
+		target.style.left = String(left + offset) + "px";
+	}
+	
 	
 	function toggleNotesCanvas() {
 		toggleCanvas("marker");
-		if(pointers.chalk.canvas.container.classList.contains( 'visible' )){
-			toggleCanvas("chalk");
+		if("chalk" in pointers){
+			if(pointers["chalk"].canvas.container.classList.contains( 'visible' )){
+				toggleCanvas("chalk");
+			}
 		}
 	}
 
 	function toggleChalkboard() {
 		toggleCanvas("chalk");
-		if(pointers.marker.canvas.container.classList.contains( 'visible' )){
-			toggleCanvas("marker");
+		if("marker" in pointers){
+			if(pointers["marker"].canvas.container.classList.contains( 'visible' )){
+				toggleCanvas("marker");
+			}
 		}
+
+	}
+
+	function toggleraser() {
+		pointers["eraser"].visibility = pointers["eraser"].visibility == "hidden" ? "visible" : "hidden";
+		slideIcon("eraser");
 	}
 
 	function closeCanvas() {
@@ -637,6 +690,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	this.drawWithChalk = drawWithChalk;
 	this.toggleNotesCanvas = toggleNotesCanvas;
 	this.toggleChalkboard = toggleChalkboard;
+	this.toggleraser = toggleraser;
 	this.clear = clear;
 	this.colorCycle = colorCycle;
 	this.reset = resetSlide;
