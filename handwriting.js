@@ -106,8 +106,6 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		}
 	};
 
-	let eraser = { radius: 20, visibility: "hidden"	}
-
 
 	let storages = resetStorages();
 
@@ -368,7 +366,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	function eraseWithEraser(context, x, y) {
 
-		let radius = eraser.radius;
+		let radius = pointers["eraser"].radius;
 
 		context.save();
 		context.beginPath();
@@ -456,7 +454,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		assignVector(e,mouse);
 		let adjusted = calculateVectorNonScaled(offset, mouse, scale);
 
-		if ((e.button == 2 || e.button == 1) || eraser.visibility == "visible") {	//1 = middle, 2 = right buton.
+		if ((e.button == 2 || e.button == 1) || pointers["eraser"].visibility == "visible") {	//1 = middle, 2 = right buton.
 			action = { type: actionType.erase, curve: [{ x: adjusted.x, y: adjusted.y }] };
 		}
 		else if (e.button == 0) {
@@ -538,7 +536,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	});
 
 	function toggleCanvas(key){
-		eraser.visibility = "hidden"; // make sure that the eraser from touch events is hidden
+		pointers["eraser"].visibility = "hidden"; // make sure that the eraser from touch events is hidden
 		pointers[key].canvas.container.classList.toggle( 'visible' );
 
 		replaceIconOnEditing(icons[key], iconEditing);
@@ -572,7 +570,6 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			target[i].classList.toggle(toggledClass);
 		}
 	}
-
 	
 	function toggleNotesCanvas() {
 		toggleCanvas("marker");
@@ -594,14 +591,8 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	}
 
 	function toggleraser() {
-		if (eraser.visibility == "hidden") eraser.visibility = "visible"; // make sure that the eraser from touch events is hidden
-		else eraser.visibility = "hidden"; // make sure that the eraser from touch events is hidden
-		// toggleCanvas("erase");
-		// if("marker" in pointers){
-		// 	if(pointers["marker"].canvas.container.classList.contains( 'visible' )){
-		// 		toggleCanvas("marker");
-		// 	}
-		// }
+		pointers["eraser"].visibility = pointers["eraser"].visibility == "hidden" ? "visible" : "hidden";
+
 	}
 
 	function closeCanvas() {
