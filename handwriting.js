@@ -110,7 +110,10 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	};
 
 
-	let storages = resetStorages();
+	let storages = {
+			marker: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
+			chalk: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
+	};
 
 	function resetStorages(){
 		let st = {
@@ -120,7 +123,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		return st
 	}
 
-	let currentKey = "marker";
+	let currentKey = "none";
 
 	let mouse = { x: 0, y: 0 };
 	let last = { x: 0, y: 0 };
@@ -232,7 +235,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			container.style.zIndex = "24";
 
 			let canvas = document.createElement( 'canvas' );
-			canvas.setAttribute( 'data-chalkboard', key);
+			canvas.setAttribute( 'data-handwriting', key);
 
 			for (cKey in pointers[key].canvas) {
 				let a = pointers[key].canvas[cKey];
@@ -324,16 +327,16 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	function getStoragesAsObj( indices, key ) {
 		if (!indices) indices = slideIndices;
 		if (!key) key = currentKey;
-		let data;
+		let data_ = [];
 		for (let i = 0; i < storages[key].data.length; i++) {
 			if (storages[key].data[i].slide.h === indices.h && storages[key].data[i].slide.v === indices.v) {
-				data = storages[key].data[i];
-				return data;
+				data_ = storages[key].data[i];
+				return data_;
 			}
 		}
 		storages[key].data.push({ slide: indices, events: []});
-		data = storages[key].data[storages[key].data.length - 1];
-		return data;
+		data_ = storages[key].data[storages[key].data.length - 1];
+		return data_;
 	}
 
 	function setDrawingParameters(pointer, context, from, to, color=null){
@@ -503,7 +506,8 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	}
 
 	document.addEventListener( 'pointerdown', function (e) {
-		if (e.target.getAttribute( 'data-chalkboard' ) == currentKey) {
+		let val = e.target.getAttribute( 'data-handwriting' );
+		if ( val == currentKey) {
 			chooseDrawErase(pointers[currentKey], e);
 		}
 	});
