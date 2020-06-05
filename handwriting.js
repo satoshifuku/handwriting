@@ -150,7 +150,9 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	function setColor2Pen(key, color) {
 
-		document.getElementsByClassName( icons[key] )[0].style.color = color;
+		let elem = document.getElementById( "toggle-" + key);
+		elem.getElementsByClassName( icons[key] )[0].style.color = color;
+
 		pointers[key].color = color;
 	}
 
@@ -191,7 +193,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	for ( key in pointers) {
 		let button = document.createElement( "div" );
-		button.className = "chalkboard-button";
+		button.className = "mode-button";
 		button.id = "toggle-" + key;
 		button.style.visibility = key != "eraser" ? "visible" : "hidden";
 		button.style.position = "absolute";
