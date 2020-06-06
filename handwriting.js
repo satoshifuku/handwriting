@@ -110,15 +110,13 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	};
 
 
-	let storages = {
-			marker: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
-			chalk: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
-	};
+	let storages = resetStorages();
 
 	function resetStorages(){
 		let st = {
 			marker: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
 			chalk: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
+			eraser: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] }
 		};
 		return st
 	}
@@ -160,13 +158,13 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	}
 
 	function setColor2Pens(color=null) {
-		
+		let color_hsl = color; 
 		for (key in pointers){
-			let color_hsl = color == null ? setHSLa(pointers[key].color_alpha) : color;
+			color_hsl = color == null ? setHSLa(pointers[key].color_alpha) : color;
 			setColor2Pen(key,color_hsl);
 		}
 
-		return color == null ? setHSLa(1) : color;
+		return color_hsl;
 	}
 
 	function setScaleOffset(pointer){
@@ -597,7 +595,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 				target[i].classList.remove(editingIcon);
 			}
 		}
-		
+
 	}
 	
 	function replaceIconOnEditing(key, toggledClass='fa-user-edit'){
