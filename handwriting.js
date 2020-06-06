@@ -550,7 +550,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		pointers["eraser"].visibility = "hidden"; // make sure that the eraser from touch events is hidden
 		pointers[key].canvas.container.classList.toggle( 'visible' );
 
-		replaceIconOnEditing(icons[key], iconEditing);
+		replaceIconOnEditing(key, iconEditing);
 		slideIcon(key);
 		
 		let canvas = document.getElementById(pointers[key].canvas.name);
@@ -597,14 +597,15 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 				target[i].classList.remove(editingIcon);
 			}
 		}
-
+		
 	}
 	
-	function replaceIconOnEditing(className, toggledClass='fa-user-edit'){
-		let target = document.getElementsByClassName(className);
-		for (let i = 0; i < target.length; i++) {
-			target[i].classList.toggle(toggledClass);
-		}
+	function replaceIconOnEditing(key, toggledClass='fa-user-edit'){
+		let elem = document.getElementById( "toggle-" + key);
+		let target = elem.getElementsByClassName( icons[key] )[0].classList.toggle(toggledClass);
+		// for (let i = 0; i < target.length; i++) {
+		// 	target[i].classList.toggle(toggledClass);
+		// }
 	}
 
 	function slideIcon(key){
