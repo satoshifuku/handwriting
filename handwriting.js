@@ -116,11 +116,12 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		let st = {
 			marker: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
 			chalk: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] },
+			eraser: { width: Reveal.getConfig().width, height: Reveal.getConfig().height, data: [] }
 		};
 		return st
 	}
 
-	let currentKey = "marker";
+	let currentKey = "none";
 
 	let mouse = { x: 0, y: 0 };
 	let last = { x: 0, y: 0 };
@@ -157,13 +158,13 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	}
 
 	function setColor2Pens(color=null) {
-		
+		let color_hsl = color; 
 		for (key in pointers){
-			let color_hsl = color == null ? setHSLa(pointers[key].color_alpha) : color;
+			color_hsl = color == null ? setHSLa(pointers[key].color_alpha) : color;
 			setColor2Pen(key,color_hsl);
 		}
 
-		return color == null ? setHSLa(1) : color;
+		return color_hsl;
 	}
 
 	function setScaleOffset(pointer){
@@ -232,7 +233,7 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 			container.style.zIndex = "24";
 
 			let canvas = document.createElement( 'canvas' );
-			canvas.setAttribute( 'data-chalkboard', key);
+			canvas.setAttribute( 'data-handwriting', key);
 
 			for (cKey in pointers[key].canvas) {
 				let a = pointers[key].canvas[cKey];
@@ -324,16 +325,16 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	function getStoragesAsObj( indices, key ) {
 		if (!indices) indices = slideIndices;
 		if (!key) key = currentKey;
-		let data;
+		let data_ = [];
 		for (let i = 0; i < storages[key].data.length; i++) {
 			if (storages[key].data[i].slide.h === indices.h && storages[key].data[i].slide.v === indices.v) {
-				data = storages[key].data[i];
-				return data;
+				data_ = storages[key].data[i];
+				return data_;
 			}
 		}
 		storages[key].data.push({ slide: indices, events: []});
-		data = storages[key].data[storages[key].data.length - 1];
-		return data;
+		data_ = storages[key].data[storages[key].data.length - 1];
+		return data_;
 	}
 
 	function setDrawingParameters(pointer, context, from, to, color=null){
@@ -503,7 +504,8 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 	}
 
 	document.addEventListener( 'pointerdown', function (e) {
-		if (e.target.getAttribute( 'data-chalkboard' ) == currentKey) {
+		let val = e.target.getAttribute( 'data-handwriting' );
+		if ( val == currentKey) {
 			chooseDrawErase(pointers[currentKey], e);
 		}
 	});
@@ -536,17 +538,22 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		console.log( 'slidechanged' );
 
 		slideIndices = Reveal.getIndices();
-		closeCanvas();
+		// closeCanvas();
+		for (key in pointers){
+			if(pointers[key].canvas.container.classList.contains( 'visible' )){
+				toggleCanvas(key);
+ 			}
+		}
 		clearCanvases(["marker", "chalk"]);
 		timerID4slideChanged = setTimeout(startReplay, 500, 0);
-
+		
 	});
 
 	function toggleCanvas(key){
 		pointers["eraser"].visibility = "hidden"; // make sure that the eraser from touch events is hidden
 		pointers[key].canvas.container.classList.toggle( 'visible' );
 
-		replaceIconOnEditing(icons[key], iconEditing);
+		replaceIconOnEditing(key, iconEditing);
 		slideIcon(key);
 		
 		let canvas = document.getElementById(pointers[key].canvas.name);
@@ -596,11 +603,12 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 
 	}
 	
-	function replaceIconOnEditing(className, toggledClass='fa-user-edit'){
-		let target = document.getElementsByClassName(className);
-		for (let i = 0; i < target.length; i++) {
-			target[i].classList.toggle(toggledClass);
-		}
+	function replaceIconOnEditing(key, toggledClass='fa-user-edit'){
+		let elem = document.getElementById( "toggle-" + key);
+		let target = elem.getElementsByClassName( icons[key] )[0].classList.toggle(toggledClass);
+		// for (let i = 0; i < target.length; i++) {
+		// 	target[i].classList.toggle(toggledClass);
+		// }
 	}
 
 	function slideIcon(key){
