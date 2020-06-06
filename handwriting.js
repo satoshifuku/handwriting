@@ -538,10 +538,15 @@ let RevealHandWriting = window.RevealHandWriting || (function () {
 		console.log( 'slidechanged' );
 
 		slideIndices = Reveal.getIndices();
-		closeCanvas();
+		// closeCanvas();
+		for (key in pointers){
+			if(pointers[key].canvas.container.classList.contains( 'visible' )){
+				toggleCanvas(key);
+ 			}
+		}
 		clearCanvases(["marker", "chalk"]);
 		timerID4slideChanged = setTimeout(startReplay, 500, 0);
-
+		
 	});
 
 	function toggleCanvas(key){
