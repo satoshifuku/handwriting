@@ -9,8 +9,8 @@ Some functions of this plugin are based on [Chalkboard of reveal.js-plugins](htt
 ## Installation
 
 Copy the follwing file and directories to __plugin/handwriting__ in your project:
-- chalkboard.js
-- img/ 
+- handwriting.js
+- img/
 - awsome-font/
 
 Add the plugin to the dependencies in your presentation, as below.
@@ -59,21 +59,25 @@ Reveal.initialize({
 |download()|Downlad recorded drawing|
 |colorCycle()|Change colors|
 
-
-
 ## Usage
 
-You can use two drawing modes:
+### Toggle drawing mode 
 
-- Maker pen
+Press a pen icon in lower-left of your slide.
+
+### Two Drawing modes:
+- Maker pen(default)
 - chalk
 
+### Erasing mode:
+
+On the drawing mode, Press an eraser icon in lower-left of your slide to toggle the Erasing mode.
 
 ### Mouse
 
 Drawing: Click a left button and drag
 
-Eraser: Click a right button and drag
+Eraser: Click the right button and drag
 
 ### Touch and pen
 
