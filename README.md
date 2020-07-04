@@ -84,3 +84,9 @@ Eraser: Click the right button and drag
 Drawing: Touch and move
 
 Eraser: Touch and hold for half a second, then move
+
+## Doker image
+
+The [Docker image](https://hub.docker.com/r/hosta1/revealjs_nginx) allows you use the handwriting's plugin easyliy.
+
+[The Github repositoly for docker file](https://github.com/satoshifuku/RevealJsOnNginx)
